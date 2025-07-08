@@ -1,0 +1,28 @@
+name: Webtoon-app build
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Setup Expo Auth
+        run: npx eas login --token ${{ secrets.EAS_ACCESS_TOKEN }}
+
+      - name: 🛠 EAS Build (Android APK)
+        run: npx eas build -p android --profile preview --non-interactive
