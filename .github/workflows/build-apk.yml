@@ -26,5 +26,5 @@ jobs:
 
       - name: 🛠 EAS Build (Android APK)
         env:
-          EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
+          EXPO_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
         run: eas build -p android --profile preview --non-interactive
