@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { BackHandler, View } from "react-native";
 
 import WebView from "react-native-webview";
 
@@ -7,6 +7,8 @@ import type WebViewType from "react-native-webview";
 
 export default function TabLayout() {
   const webviewRef = useRef<WebViewType>(null);
+
+  const [canGoBack, setCanGoBack] = useState(false);
 
   const handleLoadEnd = () => {
     // WebView 내부에 JS 코드 삽입하여 header 삭제
@@ -17,12 +19,34 @@ export default function TabLayout() {
     `);
   };
 
+  useEffect(() => {
+    const onBackPress = () => {
+      if (canGoBack && webviewRef.current) {
+        webviewRef.current.goBack();
+        return true; // 뒤로가기 기본 동작 막기
+      }
+      return false; // 앱 종료
+    };
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    return () => {
+      subscription.remove(); // 최신 방식으로 이벤트 제거
+    };
+  }, [canGoBack]);
+
   return (
     <View style={{ flex: 1 }}>
       <WebView
         ref={webviewRef}
         source={{ uri: "https://tkor036.com/%EC%9B%B9%ED%88%B0/%EC%9B%94" }}
         onLoadEnd={handleLoadEnd}
+        onNavigationStateChange={(navState) => {
+          setCanGoBack(navState.canGoBack);
+        }}
       />
     </View>
   );
