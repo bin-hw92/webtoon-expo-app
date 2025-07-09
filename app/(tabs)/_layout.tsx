@@ -1,7 +1,9 @@
+import { stackAtom } from "@/hooks/stackJotai";
+import { useAtom } from "jotai";
 import React, { useEffect, useRef, useState } from "react";
 import { BackHandler, Platform, View } from "react-native";
 
-import WebView from "react-native-webview";
+import WebView, { WebViewNavigation } from "react-native-webview";
 
 import type WebViewType from "react-native-webview";
 
@@ -9,7 +11,21 @@ export default function TabLayout() {
   const webviewRef = useRef<WebViewType>(null);
 
   const [canGoBack, setCanGoBack] = useState(false);
+  const [stack, setStack] = useAtom(stackAtom);
 
+  const handleNavi = (navState: WebViewNavigation) => {
+    if (navState.canGoBack) {
+      setCanGoBack(navState.canGoBack);
+      setStack((prev: void[]) => {
+        prev.pop();
+        return prev;
+      });
+    } else if (navState.canGoForward) {
+      setStack((prev: void[]) => {
+        return prev.concat();
+      });
+    }
+  };
   const handleLoadEnd = () => {
     // WebView 내부에 JS 코드 삽입하여 header 삭제
     webviewRef.current?.injectJavaScript(`
@@ -42,10 +58,14 @@ export default function TabLayout() {
     <View style={{ flex: 1 }}>
       <WebView
         ref={webviewRef}
-        source={{ uri: "https://tkor036.com/%EC%9B%B9%ED%88%B0/%EC%9B%94" }}
+        source={{
+          uri: stack.length
+            ? stack[stack.length - 1]
+            : "https://tkor036.com/%EC%9B%B9%ED%88%B0/%EC%9B%94",
+        }}
         onLoadEnd={handleLoadEnd}
         onNavigationStateChange={(navState) => {
-          setCanGoBack(navState.canGoBack);
+          handleNavi(navState);
         }}
         pullToRefreshEnabled={Platform.OS === "android"} // Android에서만 작동
       />
