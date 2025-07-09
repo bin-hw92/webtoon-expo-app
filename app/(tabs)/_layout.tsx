@@ -16,14 +16,10 @@ export default function TabLayout() {
   const handleNavi = (navState: WebViewNavigation) => {
     if (navState.canGoBack) {
       setCanGoBack(navState.canGoBack);
-      setStack((prev: void[]) => {
-        prev.pop();
-        return prev;
-      });
+      stack.pop();
+      setStack(stack);
     } else if (navState.canGoForward) {
-      setStack((prev: void[]) => {
-        return prev.concat();
-      });
+      setStack([...stack, navState.url]);
     }
   };
   const handleLoadEnd = () => {
