@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, View } from "react-native";
+import { BackHandler, Platform, View } from "react-native";
 
 import WebView from "react-native-webview";
 
@@ -47,6 +47,7 @@ export default function TabLayout() {
         onNavigationStateChange={(navState) => {
           setCanGoBack(navState.canGoBack);
         }}
+        pullToRefreshEnabled={Platform.OS === "android"} // Android에서만 작동
       />
     </View>
   );
