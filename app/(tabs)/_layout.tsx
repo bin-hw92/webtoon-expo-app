@@ -1,7 +1,7 @@
 import { stackAtom } from "@/hooks/stackJotai";
 import { useAtom } from "jotai";
 import React, { useEffect, useRef, useState } from "react";
-import { BackHandler, Platform, View } from "react-native";
+import { BackHandler, Platform, Text, View } from "react-native";
 
 import WebView, { WebViewNavigation } from "react-native-webview";
 
@@ -52,6 +52,7 @@ export default function TabLayout() {
 
   return (
     <View style={{ flex: 1 }}>
+      <Text>{stack.length ? stack[stack.length - 1] : "TEST"}</Text>
       <WebView
         ref={webviewRef}
         source={{
@@ -63,7 +64,7 @@ export default function TabLayout() {
         onNavigationStateChange={(navState) => {
           handleNavi(navState);
         }}
-        pullToRefreshEnabled={Platform.OS === "android"} // Android에서만 작동
+        pullToRefreshEnabled={true}
       />
     </View>
   );
