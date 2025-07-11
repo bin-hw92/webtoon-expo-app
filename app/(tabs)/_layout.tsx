@@ -1,13 +1,19 @@
 import { historyAtom } from "@/hooks/stackJotai";
 import { useAtom } from "jotai";
-import React, { useRef } from "react";
-import { View } from "react-native";
+import React, { useRef, useState } from "react";
+import {
+  Dimensions,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 
 import WebView, { WebViewNavigation } from "react-native-webview";
 
 import type WebViewType from "react-native-webview";
 
 export default function TabLayout() {
+  const [refreshing, setRefreshing] = useState(false);
   const webviewRef = useRef<WebViewType>(null);
 
   const [history, setHistory] = useAtom(historyAtom);
@@ -19,37 +25,36 @@ export default function TabLayout() {
     }
   };
 
-  // useEffect(() => {
-  //   const onBackPress = () => {
-  //     if (canGoBack && webviewRef.current) {
-  //       webviewRef.current.goBack();
-  //       return true; // 뒤로가기 기본 동작 막기
-  //     }
-  //     return false; // 앱 종료
-  //   };
-
-  //   const subscription = BackHandler.addEventListener(
-  //     "hardwareBackPress",
-  //     onBackPress
-  //   );
-
-  //   return () => {
-  //     subscription.remove(); // 최신 방식으로 이벤트 제거
-  //   };
-  // }, [canGoBack]);
+  const onRefresh = () => {
+    setRefreshing(true);
+    webviewRef.current?.reload();
+  };
 
   return (
-    <View style={{ flex: 1 }}>
-      <WebView
-        ref={webviewRef}
-        source={{
-          uri:
-            history.at(-1) ||
-            "https://tkor037.com/%EC%9B%B9%ED%88%B0/%EC%9B%94",
-        }}
-        onNavigationStateChange={onNavChange}
-        pullToRefreshEnabled={true}
-      />
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ height: Dimensions.get("window").height }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#2196F3"]}
+          />
+        }
+      >
+        <WebView
+          ref={webviewRef}
+          source={{
+            uri:
+              history.at(-1) ||
+              "https://tkor038.com/%EC%9B%B9%ED%88%B0/%EC%9B%94",
+          }}
+          onNavigationStateChange={onNavChange}
+          onLoadEnd={() => setRefreshing(false)}
+          style={{ flex: 1 }}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
