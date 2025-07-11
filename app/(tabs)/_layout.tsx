@@ -16,7 +16,7 @@ import type WebViewType from "react-native-webview";
 export default function TabLayout() {
   const [refreshing, setRefreshing] = useState(false);
   const [currentUrl, setCurrentUrl] = useState(
-    () => history.at(-1) || "https://tkor038.com/%EC%9B%B9%ED%88%B0/%EC%9B%94"
+    () => history?.at(-1) || "https://tkor038.com/%EC%9B%B9%ED%88%B0/%EC%9B%94"
   );
 
   const webviewRef = useRef<WebViewType>(null);
