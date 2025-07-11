@@ -19,10 +19,10 @@ jobs:
           node-version: 18
 
       - name: 📦 Install Dependencies
-        run: npm install
+        run: yarn install
 
       - name: 📦 Install EAS CLI
-        run: npm install -g eas-cli
+        run: yarn install -g eas-cli
 
       - name: 🛠 EAS Build (Android APK)
         env:
